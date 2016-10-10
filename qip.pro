@@ -42,6 +42,8 @@ HEADERS +=	MainWindow.h	\
 		Contrast.h	\
 		HistoStretch.h	\
 		HistoMatch.h	\
+    imagecanvas.h \
+    shaderparam.h
 
 		
 SOURCES +=	main.cpp	\ 
@@ -56,4 +58,10 @@ SOURCES +=	main.cpp	\
 		Contrast.cpp	\
 		HistoStretch.cpp\
 		HistoMatch.cpp	\
+    imagecanvas.cpp
+
+DISTFILES +=
+
+RESOURCES += \
+    resources.qrc
 

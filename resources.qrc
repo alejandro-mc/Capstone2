@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>glcanvas.frag</file>
+        <file>glcanvas.vert</file>
+    </qresource>
+</RCC>

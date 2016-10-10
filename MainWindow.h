@@ -30,6 +30,7 @@
 #include "IPtoUI.h"
 #include "ImageFilter.h"
 #include "qcustomplot.h"
+#include "imagecanvas.h"
 
 #define MAXFILTERS	50
 
@@ -99,8 +100,9 @@ private:
 	QStackedWidget*		m_stackWidgetPanels;	// stacked widget for control panels
 
 	// widgets for image display groupbox
-	QStackedWidget*		m_stackWidgetImages;	// stacked widget for input/output images
-	QRadioButton*		m_radioDisplay[2];	// radio buttons for input/output
+    //QStackedWidget*		m_stackWidgetImages;	// stacked widget for input/output images
+    ImageCanvas*        m_imagecanvas;      //image canvas widget to show input/output images
+    QRadioButton*		m_radioDisplay[2];	// radio buttons for input/output
 	QRadioButton*		m_radioMode   [2];	// radio buttons for RGB/Gray modes
 	QCheckBox*		m_checkboxHisto;	// checkbox: histogram display
 	QCheckBox*		m_checkboxTime;		// checkbox: compute timings

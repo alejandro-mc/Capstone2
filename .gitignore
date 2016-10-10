@@ -21,6 +21,9 @@ release/*
 #visual studio
 *.sdf
 *.vcxproj*
+*opensdf*
+*.suo
+
 
 # Qt-es
 
