@@ -184,3 +184,22 @@ Quantize::reset()
 	// apply filter and display output
 	g_mainWindowP->preview();
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Quantize::shaderFileName:
+//
+QLatin1String
+Quantize::shaderFileName() const{
+    return QLatin1String(":/quantize.frag");
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Quantize::parameters:
+//
+//returns a vector of paramters that are used to define the
+//uniform values for the shader
+QVector<ShaderParameter>*
+Quantize::parameters()   const{
+    return NULL;
+}

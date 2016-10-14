@@ -27,6 +27,9 @@ public:
 	Dummy		(QWidget *parent = 0);		// constructor
 	QGroupBox*	controlPanel();			// create control panel
 
+    //QLatin1String shaderFileName() const;//returns shader source
+    //QVector<ShaderParameter>* parameters()   const;
+
 private:
 	// widgets and groupbox
 	QGroupBox	*m_ctrlGrp;			// groupbox for panel

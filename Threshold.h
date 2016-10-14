@@ -11,6 +11,8 @@
 #define THRESHOLD_H
 
 #include "ImageFilter.h"
+#include "shaderparam.h"
+#include <QOpenGLShader>
 
 
 class Threshold : public ImageFilter {
@@ -23,6 +25,9 @@ public:
 	void		reset		();			// reset parameters
 	void		threshold	(ImagePtr, int, ImagePtr);
 
+    QLatin1String shaderFileName() const;//returns shader source
+    QVector<ShaderParameter>* parameters()   const;
+
 protected slots:
 	void		changeThr	(int);
 
@@ -31,6 +36,11 @@ private:
 	QSlider		*m_slider ;	// Threshold slider
 	QSpinBox	*m_spinBox;	// Threshold spinbox
 	QGroupBox	*m_ctrlGrp;	// Groupbox for panel
+
+    //parameters
+    ShaderParameter           m_param_threshold;
+    QVector<ShaderParameter>* m_params;
+    float       *m_threshold;
 };
 
 #endif	// THRESHOLD_H

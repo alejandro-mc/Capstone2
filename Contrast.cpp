@@ -201,3 +201,22 @@ Contrast::reset()
 	// apply filter and display output
 	g_mainWindowP->preview();
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Contrast::shaderFileName:
+//
+QLatin1String
+Contrast::shaderFileName() const{
+    return QLatin1String(":/contrast.frag");
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Contrast::parameters:
+//
+//returns a vector of paramters that are used to define the
+//uniform values for the shader
+QVector<ShaderParameter>*
+Contrast::parameters()   const{
+    return NULL;
+}

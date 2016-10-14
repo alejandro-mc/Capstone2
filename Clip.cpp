@@ -19,7 +19,30 @@ extern MainWindow *g_mainWindowP;
 // Constructor.
 //
 Clip::Clip(QWidget *parent) : ImageFilter(parent)
-{}
+{
+    //define threshold 1 values
+    m_threshold1 = new float(0.0);
+
+
+    m_param_threshold1.name = "threshold1";
+    m_param_threshold1.type = ParamType::Float;
+    m_param_threshold1.value = m_threshold1;
+
+    //define threshold 2 values
+    m_threshold2 = new float(1.0);
+
+    m_param_threshold2.name = "threshold2";
+    m_param_threshold2.type = ParamType::Float;
+    m_param_threshold2.value = m_threshold2;
+
+    //append the parameters to parameter list or vector
+    m_params = new QVector<ShaderParameter>();
+    m_params->append(m_param_threshold1);
+    m_params->append(m_param_threshold2);
+
+
+
+}
 
 
 
@@ -114,8 +137,19 @@ Clip::applyFilter(ImagePtr I1, ImagePtr I2)
 //
 void
 Clip::clip(ImagePtr I1, int t1, int t2, ImagePtr I2)
-{
-	HW_clip(I1, t1, t2, I2);
+{   
+    if(!g_mainWindowP->harwareAccelOn()){
+        //if in CPU mode
+        HW_clip(I1, t1, t2, I2);
+    }else{
+        //if in GPU mode
+        //change threshold parameters
+        *m_threshold1 =  (float) t1 / (float) MXGRAY;
+        *m_threshold2 =  (float) t2 / (float) MXGRAY;
+
+        //the shader will take care of the rest when the
+        //image canvas filter is repainted
+    }
 }
 
 
@@ -182,4 +216,24 @@ Clip::reset()
 
 	// apply filter and display output
 	g_mainWindowP->preview();
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Clip::shaderFileName:
+//
+QLatin1String
+Clip::shaderFileName() const{
+    return QLatin1String(":/clip.frag");
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Clip::parameters:
+//
+//returns a vector of paramters that are used to define the
+//uniform values for the shader
+QVector<ShaderParameter>*
+Clip::parameters()   const{
+    return m_params;
 }

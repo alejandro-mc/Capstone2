@@ -256,6 +256,7 @@ MainWindow::createGroupPanel()
 	// set signal-slot connection
 	connect(m_checkboxHisto, SIGNAL(stateChanged(int)), this, SLOT(setHisto(int)));
 	connect(m_checkboxTime,  SIGNAL(stateChanged(int)), this, SLOT(setTime (int)));
+    connect(m_checkboxGPU,  SIGNAL(stateChanged(int)), this, SLOT(setHardwareAccelOn (int)));
 
 	// assemble stacked widget in vertical layout
 	QVBoxLayout *vbox = new QVBoxLayout;
@@ -565,6 +566,9 @@ MainWindow::open() {
 	// init vars
 	m_width  = m_imageSrc->width ();
 	m_height = m_imageSrc->height();
+
+    m_input_img_changed=true;//change texture when hardware acceleration on
+
 	preview();
 
 	// enable the following now that input image is read
@@ -623,42 +627,57 @@ void MainWindow::display(int flag)
 	if(m_imageSrc.isNull())		return;		// no input  image
 	if(m_imageDst.isNull() && flag) return;		// no output image
 
-	// raise the appropriate widget from the stack
-    //m_stackWidgetImages->setCurrentIndex(flag);
-
 	// set radio button
 	m_radioDisplay[flag]->setChecked(1);
 
-	// determine image to be displayed
-	ImagePtr I;
-	if(flag == 0)
-		I = m_imageSrc;
-	else	I = m_imageDst;
+    ImagePtr I = m_imageSrc;
+    QImage q;
 
-	// init image dimensions
-    //int  w = I->width();
-    //int  h = I->height();
+    //when hardware acceleration is on
+    //we don't have to select input or output images
+    //the input image will have been uploaded to the GPU
+    //as a texture, therefore the QOpenGLWidget will handle this
+    //the difference between input or ouput is given by the fragment shader
 
-	// init view window dimensions
-    //int ww = m_stackWidgetImages->width();
-    //int hh = m_stackWidgetImages->height();
+    //select the input or output image in CPU mode
+    if(!m_checkboxGPU->isChecked()){
+        // determine image to be displayed
+        if(flag == 0)
+            I = m_imageSrc;
+        else	I = m_imageDst;
 
-	// convert from ImagePtr to QImage to Pixmap
-	QImage q;
-	IP_IPtoQImage(I, q);
+        // convert from ImagePtr to QImage
+        IP_IPtoQImage(I, q);
 
-	// convert from QImage to Pixmap; rescale if image is larger than view window
-    //QPixmap p;
-    //if(MIN(w, h) > MIN(ww, hh))
-    //	p = QPixmap::fromImage(q.scaled(QSize(ww, hh), Qt::KeepAspectRatio));
-    //else	p = QPixmap::fromImage(q);
+        m_imagecanvas->setImage(q);//change image
+    }else{
+        //with hardware acceleration on
+        if(m_input_img_changed){
+            IP_IPtoQImage(m_imageSrc, q);
+            m_imagecanvas->setImage(q);
+            m_input_img_changed = false;
+        }
 
-	// assign pixmap to label widget for display
-    //QLabel *widget = (QLabel *) m_stackWidgetImages->currentWidget();
-    //widget->setPixmap(p);
+        if(flag == 0){
+            //when showing the input image
+            //reset the fragment shader
+            if(!m_imagecanvas->isIdentitySet()){
+                m_imagecanvas->setIdentityFragShader();
+            }
+        }
+        else{
+            //when showing the output image
+            //set the image canvas shader to the current
+            //filter shader
+            if(m_imagecanvas->isIdentitySet()){
+                setCurrentShader();
+            }
+        }
 
-    m_imagecanvas->setImage(q);//change image
+    }
+
     m_imagecanvas->repaint();//repaint the widget
+
 
 	// compute average runtime if time checkbox is set
 	time();
@@ -813,7 +832,33 @@ MainWindow::setTime(int flag)
         preview();
 }
 
+void
+MainWindow::setHardwareAccelOn(int flag)
+{
+    //if a filter is selected set its shader and parameters
+    if(m_code > 0){
 
+        //if hardware acceleration enabled
+        if(flag){
+            m_input_img_changed=true;
+            //send input image as texture on the GPU
+            // convert from ImagePtr to QImage
+            //QImage q;
+            //IP_IPtoQImage(m_imageSrc, q);
+            //m_imagecanvas->setImage(q);
+            //setCurrentShader();
+
+        }else{
+            //if sofware version ebabled
+            if(!m_imagecanvas->isIdentitySet()){
+                m_imagecanvas->setIdentityFragShader();
+            }
+        }
+
+    }
+
+    preview();
+}
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -838,6 +883,7 @@ void MainWindow::mode(int flag)
 	else	m_histoColor = 0;	// RGB
 
 	// display image
+    m_input_img_changed = true;//upload new texture when hardware acceleration on
 	if(m_radioDisplay[0]->isChecked())	// displaying input image
 		display(0);
 	else	preview();
@@ -889,5 +935,41 @@ MainWindow::execute(QAction* action)
 
 	// use code to index into stack widget and array of filters
 	m_stackWidgetPanels->setCurrentIndex(m_code);
+
+    //if hardware accelaration enabled
+    if(harwareAccelOn()){
+        QImage q;
+        IP_IPtoQImage(m_imageSrc, q);
+        m_imagecanvas->setImage(q);
+
+        setCurrentShader();
+    }
+
 	preview();
+}
+
+bool
+MainWindow::harwareAccelOn()
+{
+    return m_checkboxGPU->isChecked();
+}
+
+void
+MainWindow::setCurrentShader()
+{
+    //usecode to get the fragment source and define fragment shader
+    m_imagecanvas->defineFragShaderSrc(m_imageFilter[m_code]->shaderFileName());
+
+    //define parameters
+    QVector<ShaderParameter>* params = m_imageFilter[m_code]->parameters();
+
+    //for every filter parameter define a fragment shader parameter
+    foreach(ShaderParameter param,*params){
+        m_imagecanvas->defineFragShaderParameter(param.name,
+                                                 param.type,
+                                                 param.value);
+    }
+
+    //and use the shader
+    m_imagecanvas->useNewFragShader();
 }

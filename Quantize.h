@@ -23,6 +23,9 @@ public:
 	void		reset		();			// reset parameters
 	void		quantize	(ImagePtr, int, bool, ImagePtr);
 
+    QLatin1String shaderFileName() const;//returns shader source
+    QVector<ShaderParameter>* parameters()   const;
+
 protected slots:
 	void		changeLevels	(int);
 	void		ditherSignal	(int);

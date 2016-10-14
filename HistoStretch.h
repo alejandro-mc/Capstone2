@@ -22,6 +22,9 @@ public:
 	void		reset		();			// reset parameters
 	void		histoStretch	(ImagePtr, int, int, ImagePtr);
 
+    QLatin1String shaderFileName() const;//returns shader source
+    QVector<ShaderParameter>* parameters()   const;
+
 protected slots:
 	void		changeThr1	(int);
 	void		changeThr2	(int);

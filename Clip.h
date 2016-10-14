@@ -22,6 +22,9 @@ public:
 	void		reset		();			// reset parameters
 	void		clip		(ImagePtr, int, int, ImagePtr);
 
+    QLatin1String shaderFileName() const;//returns shader source
+    QVector<ShaderParameter>* parameters()   const;
+
 protected slots:
 	void changeThr1	(int);
 	void changeThr2	(int);
@@ -31,6 +34,13 @@ private:
 	QSlider		*m_slider [2];	// clip sliders
 	QSpinBox	*m_spinBox[2];	// clip spin boxes
 	QGroupBox	*m_ctrlGrp;	// groupbox for panel
+
+    //parameters
+    ShaderParameter           m_param_threshold1;
+    ShaderParameter           m_param_threshold2;
+    QVector<ShaderParameter>* m_params;
+    float       *m_threshold1;
+    float       *m_threshold2;
 };
 
 #endif	// CLIP_H

@@ -188,3 +188,23 @@ HistoMatch::reset()
 	// apply filter to source image and display result
 	g_mainWindowP->preview();
 }
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// HistoMatch::shaderFileName:
+//
+QLatin1String
+HistoMatch::shaderFileName() const{
+    return QLatin1String(":/histomatch.frag");
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// HistoMatch::parameters:
+//
+//returns a vector of paramters that are used to define the
+//uniform values for the shader
+QVector<ShaderParameter>*
+HistoMatch::parameters()   const{
+    return NULL;
+}

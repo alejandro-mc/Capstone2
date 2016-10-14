@@ -23,7 +23,8 @@ public:
     void defineFragShaderSrc(QLatin1String source_path);
     void defineFragShaderParameter(QString name, int type, void* defaulvalue);
     void useNewFragShader();//makes next shader the current shader
-    //void setFragShaderParams(QVector<ShaderParameter>*);
+    void setIdentityFragShader();//sets fragment shader that performs identity op on fragments
+    bool isIdentitySet();//check if the m_identity flag is set
 
 protected:
     void initializeGL();
@@ -52,6 +53,7 @@ private:
     void                      changeFragShader();
     QOpenGLShader*            m_tmp;
     void                      setAllParams();
+    bool                      m_identity;//true when the identity frag shader is set
 
     //current shader
     QVector<ShaderParameter>* m_parameters;

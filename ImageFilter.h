@@ -11,6 +11,7 @@
 #define IMAGEFILTER_H
 
 #include <QtWidgets>
+#include "shaderparam.h"
 #include "IP.h"
 using namespace IP;
 
@@ -24,6 +25,8 @@ public:
 	virtual QGroupBox* controlPanel	();		// create control panel
 	virtual bool	   applyFilter	(ImagePtr, ImagePtr); // filter input image -> make output
 	virtual void	   reset	();		// reset parameters
+    virtual QLatin1String shaderFileName() const;//returns fragment shader file name
+    virtual QVector<ShaderParameter>* parameters()   const;
 };
 
 #endif // IMAGEFILTER_H

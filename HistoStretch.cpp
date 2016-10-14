@@ -308,3 +308,22 @@ HistoStretch::reset()
 	// apply filter to source image and display result
 	g_mainWindowP->preview();
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// HistoStretch::shaderFileName:
+//
+QLatin1String
+HistoStretch::shaderFileName() const{
+    return QLatin1String(":/histostretch.frag");
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// HistoStretch::parameters:
+//
+//returns a vector of paramters that are used to define the
+//uniform values for the shader
+QVector<ShaderParameter>*
+HistoStretch::parameters()   const{
+    return NULL;
+}

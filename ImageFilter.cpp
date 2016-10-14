@@ -56,3 +56,17 @@ ImageFilter::applyFilter(ImagePtr, ImagePtr)
 //
 void
 ImageFilter::reset() {}
+
+
+//
+QLatin1String
+ImageFilter::shaderFileName() const{
+    return QLatin1String("");
+}
+
+
+
+QVector<ShaderParameter>*
+ImageFilter::parameters()   const{
+    return NULL;
+}

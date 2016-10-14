@@ -46,6 +46,7 @@ public:
 	ImagePtr	imageDst	() const;
 	QCustomPlot*	histogram()	{return m_histogram;}
 	void		preview		();
+    bool        harwareAccelOn(); // is hardware accelleration on?
 
 public slots:
 	void		open		();
@@ -62,6 +63,7 @@ public slots:
 protected slots:
 	void		setHisto	(int);
 	void		setTime		(int);
+    void        setHardwareAccelOn (int);
 
 protected:
 	void		createActions	();
@@ -121,11 +123,16 @@ private:
 	ImagePtr		m_imageDst;		// output image
 
 	// histogram variables
-	int			m_histoColor;		// histo color id: 0=RGB,1=R,2=G,3=B,4=gray
+    int			    m_histoColor;		// histo color id: 0=RGB,1=R,2=G,3=B,4=gray
 	double			m_histoXmin[4];		// xmin for all histogram channels
 	double			m_histoXmax[4];		// xmax for all histogram channels
 	double			m_histoYmin[4];		// ymin for all histogram channels
 	double			m_histoYmax[4];		// ymax for all histogram channels
+
+    //imagecanvas related
+    void            setCurrentShader();
+    int             m_prevshader;
+    bool            m_input_img_changed;
 };
 
 

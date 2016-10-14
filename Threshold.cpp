@@ -19,7 +19,16 @@ extern MainWindow *g_mainWindowP;
 // Constructor.
 //
 Threshold::Threshold(QWidget *parent) : ImageFilter(parent)
-{}
+{
+    m_threshold = new float(0.5);
+
+    m_param_threshold.name = "threshold";
+    m_param_threshold.type = ParamType::Float;
+    m_param_threshold.value = m_threshold;
+
+    m_params = new QVector<ShaderParameter>();
+    m_params->append(m_param_threshold);
+}
 
 
 
@@ -103,7 +112,19 @@ Threshold::applyFilter(ImagePtr I1, ImagePtr I2)
 void
 Threshold::threshold(ImagePtr I1, int thr, ImagePtr I2)
 {
-	HW_threshold(I1, thr, I2);
+
+    if(!g_mainWindowP->harwareAccelOn()){
+        //if in CPU mode
+        HW_threshold(I1, thr, I2);
+    }else{
+        //if in GPU mode
+        //change threshold parameter
+        *m_threshold =  (float) thr / (float) MXGRAY;
+        qDebug() <<"Threshold: "<< *m_threshold;
+
+        //the shader will take care of the rest when the
+        //image canvas filter is repainted
+    }
 }
 
 
@@ -149,4 +170,24 @@ Threshold::reset()
 
 	// apply filter and display output
 	g_mainWindowP->preview();
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Threshold::shaderFileName:
+//
+QLatin1String
+Threshold::shaderFileName() const{
+    return QLatin1String(":/threshold.frag");
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Threshold::parameters:
+//
+//returns a vector of parmters that are used to define the
+//uniform values for the shader
+QVector<ShaderParameter>*
+Threshold::parameters()   const{
+    return m_params;
 }

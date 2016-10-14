@@ -22,6 +22,9 @@ public:
 	void		reset		();			// reset parameters
 	void		histoMatch	(ImagePtr, ImagePtr, ImagePtr);
 
+    QLatin1String shaderFileName() const;//returns shader source
+    QVector<ShaderParameter>* parameters()   const;
+
 protected slots:
 	void		changeExp	(int);
 

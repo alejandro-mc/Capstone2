@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>glcanvas.frag</file>
         <file>glcanvas.vert</file>
+        <file>threshold.frag</file>
+        <file>clip.frag</file>
     </qresource>
 </RCC>

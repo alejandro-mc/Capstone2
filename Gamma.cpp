@@ -165,3 +165,22 @@ Gamma::reset()
 	// apply filter and display output
 	g_mainWindowP->preview();
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Gamma::shaderFileName:
+//
+QLatin1String
+Gamma::shaderFileName() const{
+    return QLatin1String(":/gamma.frag");
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Gamma::parameters:
+//
+//returns a vector of paramters that are used to define the
+//uniform values for the shader
+QVector<ShaderParameter>*
+Gamma::parameters()   const{
+    return NULL;
+}

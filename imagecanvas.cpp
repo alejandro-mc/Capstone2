@@ -9,8 +9,10 @@ ImageCanvas::ImageCanvas(QWidget *parent) : QOpenGLWidget(parent)
     format.setDepthBufferSize(24);
     format.setMajorVersion(4);
     setFormat(format);
+    m_identity = true;
     m_swapshader = false;
     m_parameters = NULL;
+    m_nextparameters = NULL;
 
 }
 
@@ -244,6 +246,7 @@ ImageCanvas::setAllParams(){
         case ParamType::Float:
             m_program->setUniformValue(m_parameters->at(i).location,
                                        *((float*)m_parameters->at(i).value));
+            qDebug()<<"Shader Threshold: "<< *((float*)m_parameters->at(i).value);
         }
 
     }
@@ -370,8 +373,6 @@ ImageCanvas::useNewFragShader(){
 
     m_nextparameters = NULL;
 
-
-
     //channge the fragment shader
 
     //store in temp shader
@@ -381,11 +382,39 @@ ImageCanvas::useNewFragShader(){
     m_fragmentShader = m_nextfragmentShader;
     m_nextfragmentShader = NULL;
 
+    //set identity flag to false
+    m_identity = false;
 
     //repaint the widget so paintGL is called
     repaint();
 }
 
+
+///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// void setIdentityFragShader
+///
+/// sets the current fragment shader to one that performs an identity map
+/// i.e. the output is the same as the input
+void
+ImageCanvas::setIdentityFragShader()
+{
+    defineFragShaderSrc(QLatin1String(":/glcanvas.frag"));
+    //no parameters to define
+    useNewFragShader();
+
+    //set identity flag to false
+    m_identity = true;
+}
+
+
+///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/// bool isIdentitySet
+///
+/// returns true if the identity fragment shader is set to true, false otherwise
+bool
+ImageCanvas::isIdentitySet(){
+    return m_identity;
+}
 
 ///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
 ///ImageCanvas::changeFragmentShader
@@ -444,8 +473,8 @@ ImageCanvas::changeFragShader(){
             param->location = m_program->uniformLocation(param->name);
         }
 
-        delete param;
-        param = NULL;
+        //delete param;
+        //param = NULL;
     }
 
 
