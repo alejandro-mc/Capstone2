@@ -4,7 +4,8 @@
 //
 // Contrast.cpp - Brightness/Contrast widget.
 //
-// Written by: George Wolberg, 2016
+// Written by:  George Wolberg, 2016
+// Modified by: Alejandro Morejon Cortina, 2016
 // ======================================================================
 
 #include "MainWindow.h"
@@ -22,7 +23,22 @@ extern MainWindow *g_mainWindowP;
 // Constructor.
 //
 Contrast::Contrast(QWidget *parent) : ImageFilter(parent)
-{}
+{
+
+    m_contrast = new float(0.0);
+    m_param_contrast.name = "contrast";
+    m_param_contrast.type = ParamType::Float;
+    m_param_contrast.value = m_contrast;
+
+    m_brightness = new float(0.0);
+    m_param_brightness.name = "brightness";
+    m_param_brightness.type = ParamType::Float;
+    m_param_brightness.value = m_brightness;
+
+    m_params = new QVector<ShaderParameter>();
+    m_params->append(m_param_contrast  );
+    m_params->append(m_param_brightness);
+}
 
 
 
@@ -129,7 +145,18 @@ Contrast::applyFilter(ImagePtr I1, ImagePtr I2)
 void
 Contrast::contrast(ImagePtr I1, double brightness, double contrast, ImagePtr I2)
 {
-	HW_contrast(I1, brightness, contrast, I2);
+    if(!g_mainWindowP->harwareAccelOn()){
+        //if in CPU mode
+        HW_contrast(I1, brightness, contrast, I2);
+    }else{
+        //if in GPU mode
+        //change parameters
+        *m_contrast   =  contrast;
+        *m_brightness =  brightness / (float)(MXGRAY - 1);
+
+        //the shader will take care of the rest when the
+        //image canvas filter is repainted
+    }
 }
 
 
@@ -218,5 +245,5 @@ Contrast::shaderFileName() const{
 //uniform values for the shader
 QVector<ShaderParameter>*
 Contrast::parameters()   const{
-    return NULL;
+    return m_params;
 }

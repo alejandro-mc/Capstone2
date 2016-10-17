@@ -19,7 +19,34 @@ extern MainWindow *g_mainWindowP;
 // Constructor.
 //
 Quantize::Quantize(QWidget *parent) : ImageFilter(parent)
-{}
+{
+    m_levels = new float(3.0);
+    m_param_levels.name = "levels";
+    m_param_levels.type = ParamType::Float;
+    m_param_levels.value = m_levels;
+
+    m_dither = new float(0.0);
+    m_param_dither.name = "dither";
+    m_param_dither.type = ParamType::Float;
+    m_param_dither.value = m_dither;
+
+    //image width and height
+    m_img_width  = new int(0);
+    m_param_width.name = "width";
+    m_param_width.type = ParamType::Int;
+    m_param_width.value = m_img_width;
+
+    m_img_height = new int(0);
+    m_param_height.name = "height";
+    m_param_height.type = ParamType::Int;
+    m_param_height.value = m_img_height;
+
+    m_params = new QVector<ShaderParameter>();
+    m_params->append(m_param_levels);
+    m_params->append(m_param_dither);
+    m_params->append(m_param_width);
+    m_params->append(m_param_height);
+}
 
 
 
@@ -113,8 +140,24 @@ Quantize::applyFilter(ImagePtr I1, ImagePtr I2)
 //
 void
 Quantize::quantize(ImagePtr I1, int levels, bool dither, ImagePtr I2)
-{
-	HW_quantize(I1, levels, dither, I2);
+{   
+    if(!g_mainWindowP->harwareAccelOn()){
+        //if in CPU mode
+        HW_quantize(I1, levels, dither, I2);
+    }else{
+        //if in GPU mode
+        //change shader parameter
+        *m_levels =  levels - 1;
+        *m_dither =  (float) dither;
+
+        *m_img_width  = I1->width();
+        *m_img_height = I1->height();
+        qDebug() <<"width:" << *m_img_width;
+        qDebug() <<"height:"<< *m_img_height;
+
+        //the shader will take care of the rest when the
+        //image canvas filter is repainted
+    }
 }
 
 
@@ -201,5 +244,5 @@ Quantize::shaderFileName() const{
 //uniform values for the shader
 QVector<ShaderParameter>*
 Quantize::parameters()   const{
-    return NULL;
+    return m_params;
 }

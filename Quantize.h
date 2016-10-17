@@ -36,6 +36,17 @@ private:
 	QSpinBox	*m_spinBox;	// Quantize spin boxes
 	QCheckBox	*m_checkBox;	// Quantize checkbox
 	QGroupBox	*m_ctrlGrp;	// Groupbox for panel
+
+    //fragment shader parameters
+    ShaderParameter           m_param_levels;
+    ShaderParameter           m_param_dither;
+    ShaderParameter           m_param_width;
+    ShaderParameter           m_param_height;
+    QVector<ShaderParameter>* m_params;
+    float       *m_levels;
+    float       *m_dither;
+    int         *m_img_width;
+    int         *m_img_height;
 };
 
 #endif	// QUANTIZE_H

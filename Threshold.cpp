@@ -5,6 +5,7 @@
 // Threshold.cpp - Threshold class
 //
 // Written by: George Wolberg, 2016
+// Modified by: Alejandro Morejon Cortina, 2016
 // ======================================================================
 
 #include "MainWindow.h"

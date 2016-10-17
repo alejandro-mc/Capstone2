@@ -246,7 +246,6 @@ ImageCanvas::setAllParams(){
         case ParamType::Float:
             m_program->setUniformValue(m_parameters->at(i).location,
                                        *((float*)m_parameters->at(i).value));
-            qDebug()<<"Shader Threshold: "<< *((float*)m_parameters->at(i).value);
         }
 
     }

@@ -4,5 +4,7 @@
         <file>glcanvas.vert</file>
         <file>threshold.frag</file>
         <file>clip.frag</file>
+        <file>contrast.frag</file>
+        <file>quantize.frag</file>
     </qresource>
 </RCC>

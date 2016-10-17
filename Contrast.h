@@ -37,6 +37,13 @@ private:
 	QSlider		*m_slider [2];	// brightness/contrast sliders
 	QDoubleSpinBox	*m_spinBox[2];	// brightness/contrast spin boxes
 	QGroupBox	*m_ctrlGrp;	// groupbox for panel
+
+    //frgment shader parameters
+    ShaderParameter           m_param_contrast;
+    ShaderParameter           m_param_brightness;
+    QVector<ShaderParameter>* m_params;
+    float       *m_contrast;
+    float       *m_brightness;
 };
 
 #endif	// CONTRAST_H
